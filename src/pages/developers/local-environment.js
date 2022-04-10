@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
-import Img from "gatsby-image"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import { graphql } from "gatsby"
 import { useIntl } from "gatsby-plugin-intl"
 import { shuffle } from "lodash"
@@ -41,21 +41,21 @@ const Slogan = styled.h1`
   font-family: ${(props) => props.theme.fonts.monospace};
   text-transform: uppercase;
   font-weight: 600;
-  font-size: 32px;
+  font-size: 2rem;
   line-height: 140%;
   text-align: center;
   margin: 0 0 1.625rem;
 `
 
 // const Subtitle = styled.div`
-//   font-size: 20px;
+//   font-size: 1.25rem;
 //   line-height: 140%;
 //   color: ${(props) => props.theme.colors.text200};
 //   margin-bottom: 0.5rem;
 // `
 
 const SubSlogan = styled.p`
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 140%;
   color: ${(props) => props.theme.colors.text200};
   margin-bottom: 0.5rem;
@@ -91,7 +91,7 @@ const Column = styled.div`
   width: 100%;
 `
 
-const Hero = styled(Img)`
+const Hero = styled(GatsbyImage)`
   flex: 1 1 100%;
   max-width: 800px;
   background-size: cover;
@@ -193,7 +193,7 @@ const H2 = styled.h2`
 //       background: "#fff",
 //       name: "Solidity",
 //       description:
-//         "Solidity, the Contract-Oriented Programming Language. Inspired by C++ and Javascript.",
+//         "Solidity, the Contract-Oriented Programming Language. Inspired by C++ and JavaScript.",
 //     },
 //     {
 //       id: "vyper",
@@ -275,7 +275,7 @@ const frameworksList = [
     id: "dapptools",
     url: "https://dapp.tools/",
     githubUrl: "https://github.com/dapphub/dapptools",
-    background: "#fff",
+    background: "#ffffff",
     name: "Dapptools",
     description: "page-local-environment-dapptools-desc",
     alt: "page-local-environment-dapptools-logo-alt",
@@ -284,7 +284,7 @@ const frameworksList = [
     id: "waffle",
     url: "https://getwaffle.io/",
     githubUrl: "https://github.com/EthWorks/waffle",
-    background: "#fff",
+    background: "#ffffff",
     name: "Waffle",
     description: "page-local-environment-waffle-desc",
     alt: "page-local-environment-waffle-logo-alt",
@@ -293,7 +293,7 @@ const frameworksList = [
     id: "hardhat",
     url: "https://hardhat.org/",
     githubUrl: "https://github.com/nomiclabs/hardhat",
-    background: "#2A2C32",
+    background: "#faf8fb",
     name: "Hardhat",
     description: "page-local-environment-hardhat-desc",
     alt: "page-local-environment-hardhat-logo-alt",
@@ -302,7 +302,7 @@ const frameworksList = [
     id: "truffle",
     url: "https://www.trufflesuite.com/",
     githubUrl: "https://github.com/trufflesuite/truffle",
-    background: "#31272A",
+    background: "#31272a",
     name: "Truffle",
     description: "page-local-environment-truffle-desc",
     alt: "page-local-environment-truffle-logo-alt",
@@ -311,7 +311,7 @@ const frameworksList = [
     id: "embark",
     url: "https://framework.embarklabs.io/",
     githubUrl: "https://github.com/embarklabs/embark",
-    background: "#1B3E5F",
+    background: "#1b3e5f",
     name: "Embark",
     description: "page-local-environment-embark-desc",
     alt: "page-local-environment-embark-logo-alt",
@@ -320,7 +320,7 @@ const frameworksList = [
     id: "brownie",
     url: "https://github.com/eth-brownie/brownie",
     githubUrl: "https://github.com/eth-brownie/brownie",
-    background: "#fff",
+    background: "#ffffff",
     name: "Brownie",
     description: "page-local-environment-brownie-desc",
     alt: "page-local-environment-brownie-logo-alt",
@@ -329,7 +329,7 @@ const frameworksList = [
     id: "epirus",
     url: "https://www.web3labs.com/epirus",
     githubUrl: "https://github.com/web3labs/epirus-free",
-    background: "#fff",
+    background: "#ffffff",
     name: "Epirus",
     description: "page-local-environment-epirus-desc",
     alt: "page-local-environment-epirus-logo-alt",
@@ -338,7 +338,7 @@ const frameworksList = [
     id: "createethapp",
     url: "https://github.com/PaulRBerg/create-eth-app",
     githubUrl: "https://github.com/PaulRBerg/create-eth-app",
-    background: "#fff",
+    background: "#ffffff",
     name: "Create Eth App",
     description: "page-local-environment-eth-app-desc",
     alt: "page-local-environment-eth-app-logo-alt",
@@ -347,7 +347,7 @@ const frameworksList = [
     id: "scaffoldeth",
     url: "https://github.com/austintgriffith/scaffold-eth",
     githubUrl: "https://github.com/austintgriffith/scaffold-eth",
-    background: "#fff",
+    background: "#ffffff",
     name: "scaffold-eth",
     description: "page-local-environment-scaffold-eth-desc",
     alt: "page-local-environment-scaffold-eth-logo-alt",
@@ -356,7 +356,7 @@ const frameworksList = [
     id: "soliditytemplate",
     url: "https://github.com/paulrberg/solidity-template",
     githubUrl: "https://github.com/paulrberg/solidity-template",
-    background: "#fff",
+    background: "#ffffff",
     name: "Solidity template",
     description: "page-local-environment-solidity-template-desc",
     alt: "page-local-environment-solidity-template-logo-alt",
@@ -370,7 +370,8 @@ const ChooseStackPage = ({ data }) => {
   useEffect(() => {
     const list = shuffle(
       frameworksList.map((item) => {
-        item.image = data[item.id].childImageSharp.fixed
+        if (item.image) return item
+        item.image = getImage(data[item.id])
         return item
       })
     )
@@ -398,30 +399,6 @@ const ChooseStackPage = ({ data }) => {
           <br />
           <Translation id="page-local-environment-setup-subtitle-2" />
         </SubSlogan>
-
-        {/* <Hero
-            fluid={data.hero.childImageSharp.fluid}
-            alt="Illustration of blocks being organised like an ETH symbol"
-            loading="eager"
-          /> */}
-
-        {/* <CardGrid>
-          <StyledCard
-            emoji=":fast_forward:"
-            title="Skip setup"
-            description="Use a pre-made stack."
-          ></StyledCard>
-          <StyledCard
-            emoji=":pancakes:"
-            title="Create your own stack"
-            description="Looking to compare projects to integrate into a framework? Get an idea of the options available for different layers of the stack."
-          ></StyledCard>
-          <StyledCard
-            emoji=":woman_student:"
-            title="Learn about the stack"
-            description="If you're not ready and want to brush up on your Ethereum knowledge, check out our docs."
-          ></StyledCard>
-        </CardGrid> */}
       </HeroContent>
       <Content>
         <TwoColumnContent>
@@ -455,7 +432,7 @@ const ChooseStackPage = ({ data }) => {
           </Column>
           <Column>
             <Hero
-              fluid={data.hero.childImageSharp.fluid}
+              image={getImage(data.hero)}
               alt={translateMessageId("alt-eth-blocks", intl)}
               loading="eager"
             />
@@ -586,7 +563,7 @@ const ChooseStackPage = ({ data }) => {
         <Subtitle>Frontend JavaScript libraries</Subtitle>
         <p>Description</p>
         <Link to="/developers/docs/apis/javascript/">
-          More on Javascript libraries
+          More on JavaScript libraries
         </Link>
         <CardGrid>
           {jslibraries.map((jslibrary, idx) => {
@@ -611,28 +588,40 @@ export default ChooseStackPage
 export const devtoolImage = graphql`
   fragment devtoolImage on File {
     childImageSharp {
-      fixed(height: 100) {
-        ...GatsbyImageSharpFixed
-      }
+      gatsbyImageData(
+        height: 100
+        layout: FIXED
+        placeholder: BLURRED
+        quality: 100
+      )
     }
   }
 `
 
 export const query = graphql`
-  query {
+  {
     hero: file(relativePath: { eq: "developers-eth-blocks.png" }) {
       childImageSharp {
-        fluid(maxWidth: 800) {
-          ...GatsbyImageSharpFluid
-        }
+        gatsbyImageData(
+          width: 800
+          layout: CONSTRAINED
+          placeholder: BLURRED
+          quality: 100
+        )
       }
     }
     ogImage: file(relativePath: { eq: "developers-eth-blocks.png" }) {
       childImageSharp {
-        fixed(width: 1200) {
-          src
-        }
+        gatsbyImageData(
+          width: 1200
+          layout: FIXED
+          placeholder: BLURRED
+          quality: 100
+        )
       }
+    }
+    hardhat: file(relativePath: { eq: "dev-tools/hardhat.png" }) {
+      ...devtoolImage
     }
     dapptools: file(relativePath: { eq: "dev-tools/dapptools.png" }) {
       ...devtoolImage
@@ -640,9 +629,7 @@ export const query = graphql`
     waffle: file(relativePath: { eq: "dev-tools/waffle.png" }) {
       ...devtoolImage
     }
-    hardhat: file(relativePath: { eq: "dev-tools/hardhat.png" }) {
-      ...devtoolImage
-    }
+
     truffle: file(relativePath: { eq: "dev-tools/truffle.png" }) {
       ...devtoolImage
     }

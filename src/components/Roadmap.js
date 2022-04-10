@@ -67,7 +67,11 @@ const Roadmap = () => {
   // TODO update to pull PRs & issues separately
   useEffect(() => {
     axios
-      .get("/.netlify/functions/roadmap")
+      .get(
+        process.env.NODE_ENV === "production"
+          ? `${process.env.GATSBY_FUNCTIONS_PATH}/roadmap`
+          : "http://localhost:9000/roadmap"
+      )
       .then((response) => {
         let issues = []
         if (response.data && response.data.data) {

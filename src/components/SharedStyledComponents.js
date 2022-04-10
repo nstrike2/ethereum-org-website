@@ -95,17 +95,17 @@ export const GradientContainer = styled.div`
 
 export const SloganGradient = styled.div`
   font-weight: 800;
-  font-size: 48px;
+  font-size: 3rem;
   line-height: 140%;
   max-width: 720px;
   margin-top: 1rem;
   background-clip: text;
-  background-image: ${(props) => props.theme.colors.eth2Gradient};
+  background-image: ${(props) => props.theme.colors.upgradesGradient};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0rem;
   @media (max-width: ${(props) => props.theme.breakpoints.l}) {
-    font-size: 40px;
+    font-size: 2.5rem;
   }
 `
 
@@ -127,13 +127,14 @@ export const NavLink = styled(Link)`
   }
 `
 
-export const FakeLink = styled.div`
+// Avoid DOM error for nested links
+export const FakeLink = styled.span`
   color: ${(props) => props.theme.colors.primary};
   cursor: pointer;
 `
 
 // Avoid DOM error for nested links
-export const FakeLinkExternal = styled.div`
+export const FakeLinkExternal = styled.span`
   color: ${(props) => props.theme.colors.primary};
   &:after {
     margin-left: 0.125em;
@@ -206,6 +207,7 @@ export const ButtonPrimary = styled(Button)`
 
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryHover};
+    box-shadow: ${(props) => props.theme.colors.cardBoxShadow};
   }
   &:active {
     background-color: ${(props) => props.theme.colors.primaryActive};
@@ -225,31 +227,6 @@ export const ButtonSecondary = styled(Button)`
   &:active {
     background-color: ${(props) =>
       props.theme.colors.secondaryButtonBackgroundActive};
-  }
-`
-
-export const Eth2Header = styled.h2`
-  font-style: normal;
-  font-weight: normal;
-  font-weight: 800;
-  font-size: 48px;
-  line-height: 120%;
-  max-width: 640px; // TODO refactor to remove this
-  margin-bottom: 0rem;
-  color: ${(props) => props.theme.colors.text00};
-  @media (max-width: ${(props) => props.theme.breakpoints.l}) {
-    font-size: 40px;
-  }
-`
-
-export const Eth2HeaderGradient = styled.span`
-  background-clip: text;
-  background-image: ${(props) => props.theme.colors.eth2Gradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  @media (max-width: ${(props) => props.theme.breakpoints.s}) {
-    /* Avoid cutoff on mobile */
-    display: inline-block;
   }
 `
 
@@ -299,7 +276,8 @@ export const Header2 = styled.h2`
   /* Selected specifically for mdx rendered side icon link */
   a.header-anchor {
     position: relative;
-    display: none;
+    display: initial;
+    opacity: 0;
     margin-left: -1.5em;
     padding-right: 0.5rem;
     font-size: 1rem;
@@ -307,6 +285,7 @@ export const Header2 = styled.h2`
     &:hover {
       display: initial;
       fill: ${(props) => props.theme.colors.primary};
+      opacity: 1;
     }
   }
 
@@ -314,6 +293,7 @@ export const Header2 = styled.h2`
     a.header-anchor {
       display: initial;
       fill: ${(props) => props.theme.colors.primary};
+      opacity: 1;
     }
   }
 `
@@ -336,7 +316,8 @@ export const Header3 = styled.h3`
   /* Selected specifically for mdx rendered side icon link */
   a.header-anchor {
     position: relative;
-    display: none;
+    display: initial;
+    opacity: 0;
     margin-left: -1.5em;
     padding-right: 0.5rem;
     font-size: 1rem;
@@ -344,6 +325,7 @@ export const Header3 = styled.h3`
     &:hover {
       display: initial;
       fill: ${(props) => props.theme.colors.primary};
+      opacity: 1;
     }
   }
 
@@ -351,6 +333,7 @@ export const Header3 = styled.h3`
     a.header-anchor {
       display: initial;
       fill: ${(props) => props.theme.colors.primary};
+      opacity: 1;
     }
   }
 `
@@ -393,6 +376,13 @@ export const Header4 = styled.h4`
   }
 `
 
+export const KBD = styled.kbd`
+  vertical-align: middle;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+  border: 1px solid ${(props) => props.theme.colors.primary};
+`
+
 export const ListItem = styled.li`
   color: ${(props) => props.theme.colors.text300};
 `
@@ -431,5 +421,54 @@ export const CardItem = styled(Link)`
   @media (max-width: ${(props) => props.theme.breakpoints.s}) {
     flex: 1 1 240px;
     margin: 1rem 0;
+  }
+`
+
+// Common styled option buttons
+export const OptionContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 0 2rem;
+  margin-bottom: 2rem;
+  @media (max-width: ${(props) => props.theme.breakpoints.l}) {
+    flex-direction: column;
+    width: 100%;
+  }
+`
+
+export const Option = styled.div`
+  border-radius: 2rem;
+  border: 1px solid
+    ${(props) =>
+      props.isActive ? props.theme.colors.primary : props.theme.colors.text};
+  box-shadow: ${(props) =>
+    props.isActive ? props.theme.colors.tableBoxShadow : `none`};
+  display: flex;
+  color: ${(props) =>
+    props.isActive ? props.theme.colors.primary : props.theme.colors.text};
+  align-items: center;
+  padding: 1rem 1.5rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  @media (max-width: ${(props) => props.theme.breakpoints.l}) {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  &:hover {
+    color: ${(props) => props.theme.colors.primary};
+    border: 1px solid ${(props) => props.theme.colors.primary};
+  }
+`
+
+export const OptionText = styled.div`
+  font-size: ${(props) => props.fontSize};
+  line-height: 100%;
+  text-align: center;
+  @media (max-width: ${(props) => props.theme.breakpoints.m}) {
+    font-size: 1rem;
+    font-weight: 600;
   }
 `

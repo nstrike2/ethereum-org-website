@@ -19,7 +19,11 @@ const TranslationsInProgress = () => {
 
   useEffect(() => {
     axios
-      .get("/.netlify/functions/translations")
+      .get(
+        process.env.NODE_ENV === "production"
+          ? `${process.env.GATSBY_FUNCTIONS_PATH}/translations`
+          : "http://localhost:9000/translations"
+      )
       .then((response) => {
         let languages = []
         if (response.data && response.data.data) {

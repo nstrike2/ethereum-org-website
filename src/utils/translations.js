@@ -1,17 +1,26 @@
-const defaultStrings = require("../intl/en.json")
-const languageMetadata = require("../data/translations.json")
+const allLanguages = require("../data/translations.json")
+
+const buildLangs = (process.env.GATSBY_BUILD_LANGS || "")
+  .split(",")
+  .filter(Boolean)
+
+// will take the same shape as `allLanguages`. Only thing we are doing
+// here is filtering the desired langs to be built
+const languageMetadata = Object.fromEntries(
+  Object.entries(allLanguages).filter(([lang]) => {
+    // BUILD_LANGS === empty means to build all the langs
+    if (!buildLangs.length) {
+      return true
+    }
+
+    return buildLangs.includes(lang)
+  })
+)
 
 const supportedLanguages = Object.keys(languageMetadata)
-
-const hasTutorials = (lang) => {
-  const metadata = languageMetadata[lang]
-  if (!metadata) {
-    consoleError(`No metadata found for language: ${lang}`)
-    return
-  }
-  // Tutorials are included in v2.2: https://crowdin.com/project/ethereum-org/settings#files
-  return metadata.version >= 2.2
-}
+const legacyHomepageLanguages = supportedLanguages.filter(
+  (lang) => languageMetadata[lang].useLegacyHomepage
+)
 
 const consoleError = (message) => {
   const { NODE_ENV } = process.env
@@ -20,24 +29,9 @@ const consoleError = (message) => {
   }
 }
 
-// Returns language's content version
-// Used for conditional rendering of content
-const getLangContentVersion = (lang) => {
-  const metadata = languageMetadata[lang]
-  if (!metadata) {
-    consoleError(`No metadata found for language: ${lang}`)
-    return
-  }
-  const version = metadata.version
-  if (!version) {
-    consoleError(`No version found for language: ${lang}`)
-    return
-  }
-  return version
-}
-
 // Returns the en.json value
 const getDefaultMessage = (key) => {
+  const defaultStrings = require("../intl/en.json")
   const defaultMessage = defaultStrings[key]
   if (defaultMessage === undefined) {
     consoleError(
@@ -74,10 +68,10 @@ const translateMessageId = (id, intl) => {
 }
 
 // Must export using ES5 to import in gatsby-node.js
+module.exports.allLanguages = allLanguages
 module.exports.languageMetadata = languageMetadata
 module.exports.supportedLanguages = supportedLanguages
-module.exports.hasTutorials = hasTutorials
-module.exports.getLangContentVersion = getLangContentVersion
 module.exports.getDefaultMessage = getDefaultMessage
 module.exports.isLangRightToLeft = isLangRightToLeft
 module.exports.translateMessageId = translateMessageId
+module.exports.legacyHomepageLanguages = legacyHomepageLanguages

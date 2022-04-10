@@ -1,7 +1,9 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import { graphql } from "gatsby"
+import { getImage } from "gatsby-plugin-image"
 import { useIntl } from "gatsby-plugin-intl"
+import { shuffle } from "lodash"
 
 import { translateMessageId } from "../../utils/translations"
 import PageMetadata from "../../components/PageMetadata"
@@ -77,63 +79,68 @@ const StyledCardGrid = styled(CardGrid)`
 
 const LearningToolsPage = ({ data }) => {
   const intl = useIntl()
+  const [randomizedSandboxes, setRandomizedSandboxes] = useState([])
 
-  const sandboxes = [
-    {
-      name: "Remix",
-      description: "page-learning-tools-remix-description",
-      url: "https://remix.ethereum.org",
-      image: data.remix.childImageSharp.fixed,
-      alt: "page-learning-tools-remix-logo-alt",
-      background: "#5098D6",
-      subjects: ["Solidity", "Vyper"],
-    },
-    {
-      name: "Eth.build",
-      description: "page-learning-tools-eth-dot-build-description",
-      url: "https://eth.build/",
-      image: data.ethdotbuild.childImageSharp.fixed,
-      alt: "page-learning-tools-eth-dot-build-logo-alt",
-      background: "#000000",
-      subjects: ["web3"],
-    },
-  ]
+  useEffect(() => {
+    const sandboxes = [
+      {
+        name: "Remix",
+        description: "page-learning-tools-remix-description",
+        url: "https://remix.ethereum.org",
+        image: getImage(data.remix),
+        alt: "page-learning-tools-remix-logo-alt",
+        background: "#5098d6",
+        subjects: ["Solidity", "Vyper"],
+      },
+      {
+        name: "Eth.build",
+        description: "page-learning-tools-eth-dot-build-description",
+        url: "https://eth.build/",
+        image: getImage(data.ethdotbuild),
+        alt: "page-learning-tools-eth-dot-build-logo-alt",
+        background: "#000000",
+        subjects: ["web3"],
+      },
+      {
+        name: "Replit",
+        description: "page-learning-tools-replit-description",
+        url: "https://replit.com/@replit/Solidity-starter-beta",
+        image: getImage(data.replit),
+        alt: "page-learning-tools-replit-logo-alt",
+        background: "#0f1524",
+        subjects: ["Solidity", "web3"],
+      },
+    ]
+    const randomizedSandboxes = shuffle(sandboxes)
+    setRandomizedSandboxes(randomizedSandboxes)
+  }, [data])
 
   const games = [
     {
       name: "CryptoZombies",
       description: "page-learning-tools-cryptozombies-description",
       url: "https://cryptozombies.io/en/solidity",
-      image: data.cryptoZombie.childImageSharp.fixed,
+      image: getImage(data.cryptoZombie),
       alt: "page-learning-tools-cryptozombies-logo-alt",
-      background: "#2B2F48",
+      background: "#2b2f48",
       subjects: ["Solidity"],
     },
     {
       name: "Ethernauts",
       description: "page-learning-tools-ethernauts-description",
       url: "https://ethernaut.openzeppelin.com/",
-      image: data.oz.childImageSharp.fixed,
+      image: getImage(data.oz),
       alt: "page-learning-tools-ethernauts-logo-alt",
-      background: "#4F62DC",
+      background: "#4f62dc",
       subjects: ["Solidity"],
-    },
-    {
-      name: "Vyper.fun",
-      description: "page-learning-tools-vyperfun-description",
-      url: "https://vyper.fun",
-      image: data.vyperfun.childImageSharp.fixed,
-      alt: "page-learning-tools-vyperfun-logo-alt",
-      background: "#ffffff",
-      subjects: ["Vyper"],
     },
     {
       name: "Capture The Ether",
       description: "page-learning-tools-capture-the-ether-description",
       url: "https://capturetheether.com/",
-      image: data.captureTheEther.childImageSharp.fixed,
+      image: getImage(data.captureTheEther),
       alt: "page-learning-tools-capture-the-ether-logo-alt",
-      background: "#1B9AAA",
+      background: "#1b9aaa",
       subjects: ["Solidity"],
     },
   ]
@@ -143,43 +150,43 @@ const LearningToolsPage = ({ data }) => {
       name: "ChainShot",
       description: "page-learning-tools-chainshot-description",
       url: "https://www.chainshot.com",
-      image: data.chainshot.childImageSharp.fixed,
+      image: getImage(data.chainshot),
       alt: "page-learning-tools-chainshot-logo-alt",
-      background: "#111F29",
+      background: "#111f29",
       subjects: ["Solidity", "Vyper", "web3"],
     },
     {
       name: "ConsenSys Academy",
       description: "page-learning-tools-consensys-academy-description",
       url: "https://consensys.net/academy/bootcamp/",
-      image: data.consensys.childImageSharp.fixed,
+      image: getImage(data.consensys),
       alt: "page-learning-tools-consensys-academy-logo-alt",
-      background: "#F6F7F9",
+      background: "#f6f7f9",
       subjects: ["Solidity", "web3"],
     },
     {
-      name: "Lambda School",
-      description: "page-learning-tools-lambdaschool-description",
-      url: "https://lambdaschool.com/learn-blockchain-development",
-      image: data.lambdaschool.childImageSharp.fixed,
-      alt: "page-learning-tools-lambdaschool-logo-alt",
-      background: "#111F29",
+      name: "BloomTech",
+      description: "page-learning-tools-bloomtech-description",
+      url: "https://www.bloomtech.com/courses/web3",
+      image: getImage(data.bloomtech),
+      alt: "page-learning-tools-bloomtech-logo-alt",
+      background: "#ffffff",
       subjects: ["Solidity", "web3"],
     },
     {
       name: "_buildspace",
       description: "page-learning-tools-buildspace-description",
       url: "https://buildspace.so",
-      image: data.buildspace.childImageSharp.fixed,
+      image: getImage(data.buildspace),
       alt: "page-learning-tools-buildspace-logo-alt",
-      background: "#F6F7F9",
+      background: "#f6f7f9",
       subjects: ["Solidity", "web3"],
     },
     {
       name: "Questbook",
       description: "page-learning-tools-questbook-description",
       url: "https://questbook.app/",
-      image: data.questbook.childImageSharp.fixed,
+      image: getImage(data.questbook),
       alt: "page-learning-tools-questbook-logo-alt",
       background: "#141236",
       subjects: ["Solidity", "web3"],
@@ -188,9 +195,18 @@ const LearningToolsPage = ({ data }) => {
       name: "NFT School",
       description: "page-learning-tools-nftschool-description",
       url: "https://nftschool.dev/",
-      image: data.nftschool.childImageSharp.fixed,
+      image: getImage(data.nftschool),
       alt: "page-learning-tools-nftschool-logo-alt",
-      background: "#111F29",
+      background: "#111f29",
+      subjects: ["Solidity", "web3"],
+    },
+    {
+      name: "Pointer",
+      description: "page-learning-tools-pointer-description",
+      url: "https://pointer.gg/",
+      image: getImage(data.pointer),
+      alt: "page-learning-tools-pointer-logo-alt",
+      background: "#171717",
       subjects: ["Solidity", "web3"],
     },
   ]
@@ -217,7 +233,7 @@ const LearningToolsPage = ({ data }) => {
           <Translation id="page-learning-tools-sandbox-desc" />
         </p>
         <StyledCardGrid>
-          {sandboxes.map((sandbox, idx) => (
+          {randomizedSandboxes.map((sandbox, idx) => (
             <ProductCard
               key={idx}
               background={sandbox.background}
@@ -283,16 +299,13 @@ const LearningToolsPage = ({ data }) => {
       </StackContainer>
       <Content>
         <CalloutBanner
-          image={data.learn.childImageSharp.fluid}
+          image={getImage(data.learn)}
           alt={translateMessageId(
             "page-index-sections-enterprise-image-alt",
             intl
           )}
-          title={translateMessageId("page-learning-tools-documentation", intl)}
-          description={translateMessageId(
-            "page-learning-tools-documentation-desc",
-            intl
-          )}
+          titleKey={"page-learning-tools-documentation"}
+          descriptionKey={"page-learning-tools-documentation-desc"}
         >
           <div>
             <ButtonLink to="/developers/docs/">
@@ -310,15 +323,18 @@ export default LearningToolsPage
 export const learningToolImage = graphql`
   fragment learningToolImage on File {
     childImageSharp {
-      fixed(height: 100, quality: 100) {
-        ...GatsbyImageSharpFixed
-      }
+      gatsbyImageData(
+        height: 100
+        layout: FIXED
+        placeholder: BLURRED
+        quality: 100
+      )
     }
   }
 `
 
 export const query = graphql`
-  query {
+  {
     captureTheEther: file(
       relativePath: { eq: "dev-tools/capturetheether.png" }
     ) {
@@ -330,7 +346,7 @@ export const query = graphql`
     consensys: file(relativePath: { eq: "dev-tools/consensys.png" }) {
       ...learningToolImage
     }
-    lambdaschool: file(relativePath: { eq: "dev-tools/lambdaschool.png" }) {
+    bloomtech: file(relativePath: { eq: "dev-tools/bloomtech.png" }) {
       ...learningToolImage
     }
     buildspace: file(relativePath: { eq: "dev-tools/buildspace.png" }) {
@@ -342,13 +358,13 @@ export const query = graphql`
     oz: file(relativePath: { eq: "dev-tools/oz.png" }) {
       ...learningToolImage
     }
-    vyperfun: file(relativePath: { eq: "dev-tools/vyperfun.png" }) {
-      ...learningToolImage
-    }
     questbook: file(relativePath: { eq: "dev-tools/questbook.png" }) {
       ...learningToolImage
     }
     remix: file(relativePath: { eq: "dev-tools/remix.png" }) {
+      ...learningToolImage
+    }
+    replit: file(relativePath: { eq: "dev-tools/replit.png" }) {
       ...learningToolImage
     }
     ethdotbuild: file(relativePath: { eq: "dev-tools/eth-dot-build.png" }) {
@@ -357,11 +373,18 @@ export const query = graphql`
     nftschool: file(relativePath: { eq: "dev-tools/nftschool.png" }) {
       ...learningToolImage
     }
+    pointer: file(relativePath: { eq: "dev-tools/pointer.png" }) {
+      ...learningToolImage
+    }
+
     learn: file(relativePath: { eq: "enterprise-eth.png" }) {
       childImageSharp {
-        fluid(maxWidth: 800) {
-          ...GatsbyImageSharpFluid
-        }
+        gatsbyImageData(
+          width: 800
+          layout: CONSTRAINED
+          placeholder: BLURRED
+          quality: 100
+        )
       }
     }
   }

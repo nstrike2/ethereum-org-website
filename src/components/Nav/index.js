@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import { useIntl } from "gatsby-plugin-intl"
-import Img from "gatsby-image"
+import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { cloneDeep } from "lodash"
 
@@ -104,7 +104,7 @@ const HomeLogoNavLink = styled(Link)`
   align-items: center;
 `
 
-const HomeLogo = styled(Img)`
+const HomeLogo = styled(GatsbyImage)`
   opacity: 0.85;
   &:hover {
     opacity: 1;
@@ -119,6 +119,11 @@ const ThemeToggle = styled(NakedButton)`
   margin-left: 1rem;
   display: flex;
   align-items: center;
+  &:hover {
+    svg {
+      fill: ${(props) => props.theme.colors.primary};
+    }
+  }
 `
 
 const NavIcon = styled(Icon)`
@@ -131,12 +136,15 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   const data = useStaticQuery(graphql`
-    query {
+    {
       file(relativePath: { eq: "eth-home-icon.png" }) {
         childImageSharp {
-          fixed(width: 22) {
-            ...GatsbyImageSharpFixed
-          }
+          gatsbyImageData(
+            width: 22
+            layout: FIXED
+            placeholder: BLURRED
+            quality: 100
+          )
         }
       }
     }
@@ -161,12 +169,32 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
           to: "/dapps/",
         },
         {
+          text: "layer-2",
+          to: "/layer-2/",
+        },
+        {
+          text: "nft-page",
+          to: "/nft/",
+        },
+        {
+          text: "defi-page",
+          to: "/defi/",
+        },
+        {
+          text: "dao-page",
+          to: "/dao/",
+        },
+        {
           text: "page-stablecoins-title",
           to: "/stablecoins/",
         },
         {
           text: "page-stake-eth",
-          to: "/eth2/staking/",
+          to: "/staking/",
+        },
+        {
+          text: "run-a-node",
+          to: "/run-a-node/",
         },
       ],
     },
@@ -181,18 +209,6 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
         {
           text: "what-is-ether",
           to: "/eth/",
-        },
-        {
-          text: "defi-page",
-          to: "/defi/",
-        },
-        {
-          text: "dao-page",
-          to: "/dao/",
-        },
-        {
-          text: "nft-page",
-          to: "/nft/",
         },
         {
           text: "smart-contracts",
@@ -211,8 +227,8 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
           to: "/whitepaper/",
         },
         {
-          text: "ethereum-2-0",
-          to: "/eth2/",
+          text: "ethereum-upgrades",
+          to: "/upgrades/",
         },
         {
           text: "ethereum-glossary",
@@ -223,8 +239,20 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
           to: "/governance/",
         },
         {
+          text: "bridges",
+          to: "/bridges/",
+        },
+        {
+          text: "energy-consumption",
+          to: "/energy-consumption/",
+        },
+        {
           text: "eips",
           to: "/eips/",
+        },
+        {
+          text: "web3",
+          to: "/web3/",
         },
         {
           text: "guides-and-resources",
@@ -277,12 +305,33 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
       ariaLabel: "community-menu",
       items: [
         {
-          text: "ethereum-community",
+          text: "community-hub",
           to: "/community/",
+        },
+        {
+          text: "ethereum-online",
+          to: "/community/online/",
+        },
+        {
+          text: "ethereum-events",
+          to: "/community/events/",
+        },
+
+        {
+          text: "get-involved",
+          to: "/community/get-involved/",
         },
         {
           text: "grants",
           to: "/community/grants/",
+        },
+        {
+          text: "ethereum-support",
+          to: "/community/support/",
+        },
+        {
+          text: "language-resources",
+          to: "/community/language-resources/",
         },
       ],
     },
@@ -321,17 +370,23 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
       setIsMenuOpen(false)
       setIsSearchOpen(false)
     }
+
+    if (isMenuOpen || isSearchOpen) {
+      document.documentElement.style.overflowY = "scroll"
+    } else {
+      document.documentElement.style.overflowY = "hidden"
+    }
   }
 
   const shouldShowSubNav = path.includes("/developers/")
 
   return (
     <NavContainer>
-      <StyledNav>
+      <StyledNav aria-label={translateMessageId("nav-primary", intl)}>
         <NavContent>
           <HomeLogoNavLink to="/">
             <HomeLogo
-              fixed={data.file.childImageSharp.fixed}
+              image={getImage(data.file)}
               alt={translateMessageId("ethereum-logo", intl)}
             />
           </HomeLogoNavLink>
@@ -358,7 +413,7 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
               )}
             </LeftItems>
             <RightItems>
-              <Search />
+              <Search useKeyboardShortcuts />
               <ThemeToggle
                 onClick={handleThemeChange}
                 aria-label={
@@ -387,7 +442,7 @@ const Nav = ({ handleThemeChange, isDarkTheme, path }) => {
         </NavContent>
       </StyledNav>
       {shouldShowSubNav && (
-        <SubNav>
+        <SubNav aria-label={translateMessageId("nav-developers", intl)}>
           {ednLinks.map((link, idx) => (
             <NavLink
               key={idx}

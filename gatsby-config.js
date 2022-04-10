@@ -1,9 +1,17 @@
-const translations = require("./src/utils/translations")
 require("dotenv").config()
 
-const supportedLanguages = translations.supportedLanguages
+const { supportedLanguages, allLanguages } = require("./src/utils/translations")
+
 const defaultLanguage = `en`
 const siteUrl = `https://ethereum.org`
+
+const ignoreContent = (process.env.IGNORE_CONTENT || "")
+  .split(",")
+  .filter(Boolean)
+
+const ignoreTranslations = Object.keys(allLanguages)
+  .filter((lang) => !supportedLanguages.includes(lang))
+  .map((lang) => `**/translations\/${lang}`)
 
 module.exports = {
   siteMetadata: {
@@ -40,7 +48,7 @@ module.exports = {
         name: `ethereum.org`,
         short_name: `ethereum.org`,
         start_url: `/en/`,
-        background_color: `#fff`,
+        background_color: `#ffffff`,
         theme_color: `#1c1ce1`,
         display: `standalone`,
         icon: `src/assets/favicon.png`,
@@ -59,28 +67,6 @@ module.exports = {
         // dev: true,
       },
     },
-    {
-      resolve: `gatsby-plugin-lodash`,
-      options: {
-        disabledFeatures: [
-          `shorthands`,
-          `currying`,
-          `caching`,
-          `collections`,
-          `exotics`,
-          `guards`,
-          `metadata`,
-          `deburring`,
-          `unicode`,
-          `chaining`,
-          `momoizing`,
-          `coercions`,
-          `flattening`,
-          `paths`,
-          `placeholders`,
-        ],
-      },
-    },
     // Sitemap generator (ethereum.org/sitemap.xml)
     {
       resolve: `gatsby-plugin-sitemap`,
@@ -97,25 +83,26 @@ module.exports = {
             }
           }
         }`,
-        serialize: ({ site, allSitePage }) =>
-          allSitePage.nodes
-            .filter((node) => {
+        resolvePages: ({ site, allSitePage: { nodes: allPages } }) => {
+          return allPages
+            .filter((page) => {
               // Filter out 404 pages
-              return !node.path.includes("404")
+              return !page.path.includes("404")
             })
-            .map((node) => {
-              const path = node.path
-              const url = `${site.siteMetadata.siteUrl}${path}`
-              const changefreq = path.includes(`/${defaultLanguage}/`)
-                ? `weekly`
-                : `monthly`
-              const priority = path.includes(`/${defaultLanguage}/`) ? 0.7 : 0.5
-              return {
-                url,
-                changefreq,
-                priority,
-              }
-            }),
+            .map((page) => ({ ...page, siteUrl: site.siteMetadata.siteUrl }))
+        },
+        serialize: ({ path, siteUrl }) => {
+          const url = `${siteUrl}${path}`
+          const changefreq = path.includes(`/${defaultLanguage}/`)
+            ? `weekly`
+            : `monthly`
+          const priority = path.includes(`/${defaultLanguage}/`) ? 0.7 : 0.5
+          return {
+            url,
+            changefreq,
+            priority,
+          }
+        },
       },
     },
     // Ability to set custom IDs for headings (for translations)
@@ -124,6 +111,8 @@ module.exports = {
     // Image support in markdown
     `gatsby-remark-images`,
     `gatsby-remark-copy-linked-files`,
+    // READING time
+    "gatsby-remark-reading-time",
     // MDX support
     {
       resolve: `gatsby-plugin-mdx`,
@@ -145,6 +134,10 @@ module.exports = {
         // The plugin must be listed top-level & in gatsbyRemarkPlugins
         // See: https://www.gatsbyjs.org/docs/mdx/plugins/
         gatsbyRemarkPlugins: [
+          {
+            // Local plugin to adjust the images urls of the translated md files
+            resolve: require.resolve(`./plugins/gatsby-remark-image-urls`),
+          },
           {
             resolve: `gatsby-remark-autolink-headers`,
             options: {
@@ -179,8 +172,19 @@ module.exports = {
         noQueryString: true,
       },
     },
-    // Needed for `gatsby-image`
+    // Needed for `gatsby-plugin-image`
+    `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
+    // SVG support
+    {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        rule: {
+          include: /assets/,
+        },
+      },
+    },
     // CSS in JS
     `gatsby-plugin-styled-components`,
     // Source assets
@@ -197,6 +201,7 @@ module.exports = {
       options: {
         name: `content`,
         path: `${__dirname}/src/content`,
+        ignore: [...ignoreContent, ...ignoreTranslations],
       },
     },
     // Source data
@@ -217,12 +222,13 @@ module.exports = {
         include: /\.md$|\.csv/i, // Only .md & .csv files
       },
     },
-    // Needed for `gatsby-image`
-    `gatsby-transformer-sharp`,
+    // Needed for Gatsby Cloud redirect support
+    `gatsby-plugin-gatsby-cloud`,
+    // Creates `_redirects` & `_headers` build files for Netlify
+    `gatsby-plugin-netlify`,
   ],
   // https://www.gatsbyjs.com/docs/reference/release-notes/v2.28/#feature-flags-in-gatsby-configjs
   flags: {
-    PRESERVE_WEBPACK_CACHE: true,
     FAST_DEV: true, // DEV_SSR, QUERY_ON_DEMAND & LAZY_IMAGES
   },
 }

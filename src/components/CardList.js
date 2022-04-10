@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import Img from "gatsby-image"
+import { GatsbyImage } from "gatsby-plugin-image"
 
 import Link from "./Link"
 
@@ -21,7 +21,7 @@ const Item = styled.div`
   margin-bottom: 1px;
   padding: 1rem;
   width: 100%;
-  color: #000;
+  color: #000000;
   &:hover {
     border-radius: 4px;
     box-shadow: 0 0 1px ${(props) => props.theme.colors.primary};
@@ -38,7 +38,7 @@ const ItemLink = styled(Link)`
   margin-bottom: 1px;
   padding: 1rem;
   width: 100%;
-  color: #000;
+  color: #000000;
   &:hover {
     border-radius: 4px;
     box-shadow: 0 0 1px ${(props) => props.theme.colors.primary};
@@ -68,7 +68,7 @@ const RightContainer = styled.div`
   flex-wrap: wrap;
 `
 
-const Image = styled(Img)`
+const Image = styled(GatsbyImage)`
   min-width: 20px;
   margin-right: 1rem;
   margin-top: 4px;
@@ -81,7 +81,7 @@ const CardList = ({ content, className, clickHandler }) => (
       const isLink = !!link
       return isLink ? (
         <ItemLink key={id || idx} to={link}>
-          {image && <Image fixed={image} alt={alt} />}
+          {image && <Image image={image} alt={alt} />}
           <LeftContainer>
             <ItemTitle>{title}</ItemTitle>
 
@@ -95,7 +95,7 @@ const CardList = ({ content, className, clickHandler }) => (
         </ItemLink>
       ) : (
         <Item key={idx} onClick={() => clickHandler(idx)}>
-          {image && <Image fixed={image} alt={alt} />}
+          {image && <Image image={image} alt={alt} />}
           <LeftContainer>
             <ItemTitle>{title}</ItemTitle>
 

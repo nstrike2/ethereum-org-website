@@ -54,7 +54,11 @@ const ReleaseBanner = ({ storageKey }) => {
     setLoading(true)
     const fetchBlockInfo = async () => {
       try {
-        const data = await getFreshData("/.netlify/functions/etherscanBlock")
+        const data = await getFreshData(
+          process.env.NODE_ENV === "production"
+            ? `${process.env.GATSBY_FUNCTIONS_PATH}/etherscanBlock`
+            : "http://localhost:9000/etherscanBlock"
+        )
         setTimeLeft(data)
         setLoading(false)
       } catch (error) {
